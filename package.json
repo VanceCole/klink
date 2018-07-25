@@ -1,0 +1,21 @@
+{
+  "name": "klink",
+  "version": "0.0.1",
+  "description": "Chat bot for TriCities PokemonGo Discord",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^11.3.2",
+    "discord.js-commando": "^0.10.0",
+    "sqlite": "^2.9.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.0.0",
+    "eslint-plugin-import": "^2.13.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Vance",
+  "license": "ISC"
+}
