@@ -1,5 +1,6 @@
 const { Command } = require('discord.js-commando');
 const sql = require('sqlite');
+const moment = require('moment');
 const config = require.main.require('./config.json');
 
 module.exports = class AddNumbersCommand extends Command {
@@ -44,19 +45,42 @@ module.exports = class AddNumbersCommand extends Command {
 		}
 		return false;
 	}
+	
+
+	formatList(rows) {
+		// Init response
+		let rsp = '';
+		// Loop through results
+		rows.forEach(row => {
+			let remain = moment.utc(row.ctime).diff(moment(), 'minutes');
+			console.log(remain);
+			console.log(remain.length);
+			remain = ' '.repeat(5-remain.toString().length) + remain;
+			const city = row.city.substring(0, 12) + ' '.repeat(12-row.city.length);
+			const pokemon = row.pokemon.substring(0, 14) + ' '.repeat(14-row.pokemon.length);
+			const location = row.location;
+
+			rsp += `\n${remain}m | ${city} | ${pokemon} | ${location}`;
+		});
+		return `**Currently active raids**\n\`\`\`${rsp}\`\`\``;
+	}
 
 	async run(msg, args) {
 		const guild = msg.message.channel.guild.id;
-		// Open raids database
-        sql.open('./raid.sqlite');
-        sql.get(`SELECT * FROM raids WHERE guild ="${guild}"`)
-            .then(row => {
-                console.log(row);
-            });
         
         if(!args.query) {
-            let rsp = 'Currently active raids:';
-            return msg.say(rsp);
+			// Open raids database
+			sql.open('./raid.sqlite').then(() => {
+				// Select existing raids from this guild
+				sql.all(`
+					SELECT * FROM raids
+					WHERE guild = "${guild}"
+					AND ctime > datetime('now') 
+					`)
+				.then(rows => {
+					msg.say(this.formatList(rows));
+				});
+			});
         } else {
 
         }

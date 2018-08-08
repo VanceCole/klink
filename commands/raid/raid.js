@@ -66,9 +66,10 @@ module.exports = class AddNumbersCommand extends Command {
 		const guild = msg.message.channel.guild.id;
 
 		// Open raids database
-		sql.open('./raid.sqlite');
-		// Check if table for this server exists
-		sql.run(`CREATE TABLE IF NOT EXISTS raids (guild TEXT, userId TEXT, city TEXT, pokemon TEXT, ctime DATETIME, location TEXT)`)
+		sql.open('./raid.sqlite').then(() => {
+			
+			// Check if table for this server exists
+			sql.run(`CREATE TABLE IF NOT EXISTS raids (guild TEXT, userId TEXT, city TEXT, pokemon TEXT, ctime DATETIME, location TEXT)`)
 			.then(() => {
 				// Insert new raid to table
 				sql.run(`INSERT INTO raids (guild, userId, city, pokemon, ctime, location) VALUES (?, ?, ?, ?, datetime('now','+${time} minutes'), ?)`, [guild, msg.author.id, city, pokemon, location])
@@ -86,6 +87,8 @@ module.exports = class AddNumbersCommand extends Command {
 				console.error;
 				return msg.say('Oops, something went wrong.');
 			});
+			
+		});
 		
 
 
